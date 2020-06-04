@@ -6,8 +6,10 @@ class Room:
         self.name = name
         self.description = description
         self.loot = []
-    def add_items(self,item):
+    def add_item(self,item):
         self.loot.append(item)
+    def drop_item(self,item):
+        self.loot.remove(item)
     def get_description(self):
         return {self.description}
     def __str__(self):

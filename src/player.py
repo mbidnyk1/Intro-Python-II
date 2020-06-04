@@ -5,8 +5,12 @@ class Player:
         self.name = name
         self.current_room = current_room
         self.inventory = []
-    def add_items(self,item):
+    def add_item(self,item):
         self.inventory.append(item)
+    def drop_item(self,item):
+        self.inventory.remove(item)
+    def get_inventory(self):
+        [print(f'{item.__str__()}') for item in self.inventory]
     def __str__(self):
         return f"Player: {self.name}"
     def __repr__(self):

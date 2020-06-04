@@ -58,55 +58,82 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
-room['outside'].add_items(items[0])
-room['foyer'].add_items(items[1])
+room['outside'].add_item(items[0])
+room['foyer'].add_item(items[1])
+room['narrow'].add_item(items[2])
 player_name = input("What is your name? \n")
 player = Player(player_name,"Outside Cave Entrance")
 curr_room = room['outside']
 action_error = 'Movement not allowed in that direction. **Use keys: [n, s, e, w] for each respective direction**'
 
+def check_item(item_name,loot):
+    for item in loot:
+        if item == item_name:
+            return item.name
+    else:
+        return False
+def print_items(items):
+    [print(f'{item}') for item in items]
+
 while True:
     print(f'You arrive at the {player.current_room}')
     wrap_descrip = wrapper.wrap(text=curr_room.description)
     print(f'{wrap_descrip}')
-    print(f'{curr_room.loot}')
-    action = input('You can move north, south, east, or west. **Use keys: [n, s, e, w] for each respective direction** \n')
-    if action == 'n':
-        try: 
-            curr_room.n_to
-        except AttributeError: 
-            print(action_error)
+    print_items(curr_room.loot)
+    user_input = input('You can move north, south, east, or west. **Use keys: [n, s, e, w] for each respective direction** \n')
+    action = user_input.strip().split()
+    print(f'{action}')
+    if len(action) == 1:
+        action = action[0] 
+        if action == 'n':
+            try: 
+            
+                curr_room = curr_room.n_to
+                player.current_room = curr_room.name
+                print(f'You move north')
+            except AttributeError: 
+                print(action_error)
+    
+        elif action == 's':
+            try: 
+                curr_room.s_to
+            except AttributeError: 
+                print(action_error)
+            else:
+                curr_room = curr_room.s_to
+                player.current_room = curr_room.name
+                print(f'You move south')
+        elif action == 'e':
+            try: 
+                curr_room.e_to
+            except AttributeError: 
+                print(action_error)
+            else:
+                curr_room = curr_room.e_to
+                player.current_room = curr_room.name
+                print(f'You move east')
+        elif action == 'w':
+            try: 
+                curr_room.w_to
+            except AttributeError: 
+                print(action_error)
+            else:
+                curr_room = curr_room.w_to
+                player.current_room = curr_room.name
+                print(f'You move west')
+        elif action == 'i':
+            player.get_inventory()
+        elif action == 'q':
+            exit()
         else:
-            curr_room = curr_room.n_to
-            player.current_room = curr_room.name
-            print(f'You move north')
-    elif action == 's':
-        try: 
-            curr_room.s_to
-        except AttributeError: 
             print(action_error)
-        else:
-            curr_room = curr_room.s_to
-            player.current_room = curr_room.name
-            print(f'You move south')
-    elif action == 'e':
-        try: 
-            curr_room.e_to
-        except AttributeError: 
-            print(action_error)
-        else:
-            curr_room = curr_room.e_to
-            player.current_room = curr_room.name
-            print(f'You move east')
-    elif action == 'w':
-        try: 
-            curr_room.w_to
-        except AttributeError: 
-            print(action_error)
-        else:
-            curr_room = curr_room.w_to
-            player.current_room = curr_room.name
-            print(f'You move west')
+    elif len(action) == 2:
+        if action[0] == 'get' and check_item(action[1], curr_room.loot) != False:
+           target_item = check_item(action[1], curr_room.loot)
+           curr_room.drop_item(target_item)
+           player.add_item(target_item)
+           target_item.on_take()
+        else: print("That item is nowhere in sight.")
     elif action == 'q':
         exit()
     else:
